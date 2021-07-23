@@ -1,0 +1,109 @@
+## ***************** Initialization # basis  ***************
+units                        metal
+dimension                      3
+boundary                    p   p   p
+atom_style                    atomic
+
+# ****************** Read restart file *****************
+
+read_restart            optimize.restart        # The statement "atom_modify map hash" must be added to the 'in file' that generates the restart file
+
+# mass
+# First layer
+
+mass                       1     10.811000    #  B1
+mass                       2     12.010700    #  C1
+mass                       3     14.006700    #  N1
+
+# *******************  Define a few parameters  ********************** 
+
+variable              T        equal  300                        # Average temperature   300K
+variable              DT       equal  0.0005                     # Timestep    0.5fs   (Read from the restart file)
+
+# *********************  Potential  function setting  *****************
+
+pair_style            tersoff
+pair_coeff            *      *           BNC.tersoff        B        C       N
+
+timestep              ${DT}
+
+#  *************************  The following to  divide  block ***********************
+#  *************************  For Y direction  **************************************
+
+variable         y_max        equal           ly
+variable         P            equal     ${y_max}/2-100
+variable         P1           equal     ${y_max}/2+100
+
+variable         tmp1         equal     ${P1}-${P}
+variable         tmp          equal     ${tmp1}/40
+
+variable         L1           equal     ${P}+3*${tmp}
+variable         R1           equal     ${P1}-3*${tmp}
+
+region          lfixed     block     INF   INF        INF              ${P}                 INF   INF    units box
+region          rfixed     block     INF   INF       ${P1}             INF                  INF   INF    units box
+
+region          hot        block     INF   INF       ${P}              ${L1}                INF   INF    units box
+region          cold       block     INF   INF       ${R1}             ${P1}                INF   INF    units box
+
+region          fixed      union     2     lfixed    rfixed
+
+region          main       block     INF   INF       ${P}              ${P1}                INF   INF    units box
+
+group           lfixed      region       lfixed
+group           rfixed      region       rfixed
+group           hot         region       hot
+group           cold        region       cold
+
+group           main        region       main
+
+## *****************  Frozen atomic group  **************         
+                    
+group           freeze      region       fixed
+
+##*****************  Velocity groups for transmission calculation  *****************
+
+variable        dmid         equal          6                                    ## Set to 6 (A) here
+variable        middle       equal     ${y_max}/2 
+variable        mid_left     equal     ${middle}-${dmid}
+variable        mid_right    equal     ${middle}+${dmid}+5
+
+region          int_L        block     INF  INF         ${mid_left}        ${middle}            INF   INF    units box
+region          int_R        block     INF  INF         ${middle}          ${mid_right}         INF   INF    units box
+
+group           interface_L  region    int_L
+group           interface_R  region    int_R
+group           interface    union     interface_L     interface_R
+
+##  **************  Freeze (Freeze some of the atoms of the model)  **************
+
+velocity         freeze    set       0.0   0.0   0.0    units box
+fix              3        freeze     nve/noforce                   
+
+## ****************  Sampling data and run 0 *****************
+
+fix              1          main          nve
+
+variable 	       N          equal    "count(all)"
+variable	       NL         equal    "count(interface_L)"
+variable 	       NR         equal    "count(interface_R)"
+
+print 		        "NL  ${NL}"  
+print  		        "NR  ${NR}"  
+
+## dump group ids
+
+dump               left      interface_L         custom   1   dump.left   id
+dump_modify        left      sort id
+
+dump               right     interface_R         custom   1   dump.right   id
+dump_modify        right     sort id
+
+dump               interface     interface       custom   1   dump.interface   id
+dump_modify        interface     sort id
+
+run                0
+
+undump             left
+undump             right
+undump             interface
