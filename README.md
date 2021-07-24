@@ -111,6 +111,6 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 <img src=https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/Ref_paper/ref_fig.jpg>
  
-<p align="center">#### HelloWorld</p>
+#### <p align="left">2. Accumulated conductance</p>
  
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
