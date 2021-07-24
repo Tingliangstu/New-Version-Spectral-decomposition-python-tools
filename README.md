@@ -104,14 +104,14 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 #### 1. Spectral thermal conductance
 
-<img src="D:\Github\New-Version-Spectral-decomposition-python-tools\SHC_calculate\Fij.dat_SHC.png" style="zoom: 67%;" />
+<img src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_SHC.png" style="zoom: 50%;" />
 
 
 
 ​                                                        **This picture is very similar to the [reference](https://doi.org/10.1016/j.ijheatmasstransfer.2019.118608) (see below)**
 
-![](D:\Github\New-Version-Spectral-decomposition-python-tools\Ref_paper\ref_fig.jpg)
+![](https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/Ref_paper/ref_fig.jpg)
 
 #### 2. Accumulated thermal conductance
 
-<img src="D:\Github\New-Version-Spectral-decomposition-python-tools\SHC_calculate\Fij.dat_accumulated_ITC.png" style="zoom:67%;" />
+<img src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;" />
