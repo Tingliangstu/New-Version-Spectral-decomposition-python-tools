@@ -109,7 +109,7 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 ​                                                        **This picture is very similar to the [reference](https://doi.org/10.1016/j.ijheatmasstransfer.2019.118608) (see below)**
 
-<div align=center><img width="550" height="300" src=https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/Ref_paper/ref_fig.jpg>
+<div align=center><img width="600" height="300" src=https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/Ref_paper/ref_fig.jpg>
  
 ### <p align="left">2. Accumulated conductance</p>
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
