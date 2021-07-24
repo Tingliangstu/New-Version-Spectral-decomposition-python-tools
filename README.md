@@ -38,7 +38,7 @@ variable         L1           equal     ${P}+3*${tmp}
 variable         R1           equal     ${P1}-3*${tmp}
 ```
 
-- [x] **Modify in relax_thermal.in file **
+- [x] **Modify in relax_thermal.in file** 
 
 ```python
 variable        dmid         equal            6         ## Set to 6 (A) here, one can modify it
