@@ -95,9 +95,11 @@ g++  compactify_vels.cpp  -o  compactify_vels
 - ------
 
   ***Maybe one need to modify the input file according to the error report***
-  
+
+  - [x] tips: check the **`generate_force.log`** file is a good option
+
   *If you are lucky, maybe you don’t need to modify anything*
-  
+
   
 
 ## Output
@@ -110,6 +112,7 @@ g++  compactify_vels.cpp  -o  compactify_vels
 ​                                                        **This picture is very similar to the [reference](https://doi.org/10.1016/j.ijheatmasstransfer.2019.118608) (see below)**
 
 <div align=center><img width="600" height="300" src=https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/Ref_paper/ref_fig.jpg>
- 
+
 ### <p align="left">2. Accumulated conductance</p>
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
+
