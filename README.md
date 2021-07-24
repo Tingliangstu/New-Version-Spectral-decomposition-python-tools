@@ -104,7 +104,7 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 #### 1. Spectral thermal conductance
 
-<img src="D:\Github\New-Version-Spectral-decomposition-python-tools\SHC_calculate\Fij.dat_SHC.png" style="zoom: 67%;" />
+<img src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_SHC.png" style="zoom: 67%;" />
 
 
 
