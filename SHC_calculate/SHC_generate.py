@@ -537,9 +537,9 @@ if __name__ == "__main__":
     plt.ylabel('Transmission')
     plt.xlim(0, max(x_Frequency))                             # Frequency range
     plt.ylim(0, max(T_w) + 5)                                 # It depends on your case
-    plt.legend(fontsize=15, loc='best')    
-    plt.show()      
+    plt.legend(fontsize=15, loc='best')          
     plt.savefig(fileprefix+'_Tw.png')
+    plt.show()
     
     # Spectral thermal conductance
     plt.plot(x_Frequency, y_ITC, '-', linewidth = 3, label="Spectral thermal conductance")   
@@ -548,9 +548,9 @@ if __name__ == "__main__":
     plt.xlim(0, max(x_Frequency))                             # Frequency range
     plt.ylim(0, max(y_ITC)+(max(y_ITC)/5))                    # It depends on your case
     print('\nThe total thermal conductance is (total area)' + str(sci.trapz(y_ITC, x_Frequency)) + ' (GW/m^2/K)\n')   
-    plt.legend(fontsize=15, loc='best')    
-    plt.show()      
+    plt.legend(fontsize=15, loc='best')          
     plt.savefig(fileprefix+'_SHC.png')
+    plt.show()
     
     # Spectral accumulated thermal conductance
     plt.plot(x_Frequency, accumulated_ITC, 'm', linewidth = 3, label="Accumulated thermal conductance") 
@@ -559,5 +559,5 @@ if __name__ == "__main__":
     plt.xlim(0, max(x_Frequency))                             # Frequency range
     plt.ylim(0, accumulated_count + 1)                        # It depends on your case
     plt.legend(fontsize=15, loc='best')
-    plt.show()
     plt.savefig(fileprefix+'_accumulated_ITC.png')
+    plt.show()
