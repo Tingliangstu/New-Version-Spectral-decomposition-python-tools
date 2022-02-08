@@ -81,6 +81,10 @@ class SHCPostProc(object):
         # Attributes set by positional arguments
         self.compactVelocityFile = Compact_VelocityFile       # For velocity
         self.KijFilePrefix = Kij_FilePrefix                   # For atoms forces
+        
+        # For call the force_calcalte.py
+        self.show_log = False
+        self.if_MPI = True                                    # parallel to run lammps and python (Default = True)
 
         # Attributes set by keyword parameters below
         # MD Attributes
@@ -197,7 +201,7 @@ class SHCPostProc(object):
     	
         from force_calculate import fcCalc
         with fcCalc(fileprefix) as fc:
-            fc.preparelammps(in_lammps = LAMMPSInFile, w_interface = 6.0)
+            fc.preparelammps(in_lammps = LAMMPSInFile, w_interface = 6.0, show_log = self.show_log, if_MPI = self.if_MPI)
             fc.fcCalc(self.hstep)
             fc.writeToFile()
             print('Force constant matrix file generate done')
@@ -495,7 +499,8 @@ if __name__ == "__main__":
                                 in_plane = False,
                                 out_of_plane = False,
                                 reCalcVels = True,
-                                reCalcFC = True)
+                                reCalcFC = True,
+                                if_MPI = False)
                                 
     postprocessor.postProcess()
     

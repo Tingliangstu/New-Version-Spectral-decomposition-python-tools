@@ -60,12 +60,10 @@ class fcCalc(object):
            for k in range(N_atoms):
               ids.append(int(fin.readline().strip().split()[0]))
            fin.close()
-           
-        os.remove(ids_file)
         
         return np.array(ids)
         
-    def preparelammps(self, in_lammps = None, w_interface = 6.0, show_log = False):
+    def preparelammps(self, in_lammps = None, w_interface = 6.0, show_log = False, if_MPI = True):
         """
         Prepare the LAMMPS object for computing force constants.
         :param fileprefix: File prefix (lammps in_file)
@@ -76,6 +74,12 @@ class fcCalc(object):
         :type show_log: boolean, optional
         :return: None
         """
+        if if_MPI:
+        	
+        	 from mpi4py import MPI
+           me = MPI.COMM_WORLD.Get_rank()
+           nprocs = MPI.COMM_WORLD.Get_size()
+        
         from lammps import lammps
         
         cmd_list = ['-log', 'generate_force.log', '-screen', 'none']
@@ -107,8 +111,8 @@ class fcCalc(object):
              
         # Get the position of the interface, at the middle by default (0.5)
         
-        xlo = self.lmp.extract_global("boxxlo", 1)
-        xhi = self.lmp.extract_global("boxxhi", 1)
+        #xlo = self.lmp.extract_global("boxxlo", 1)  # no need
+        #xhi = self.lmp.extract_global("boxxhi", 1)
         
         #print ("Box is [%f,  %f]." % (xlo, xhi))                            # Print the boundaries of the box (optional)
         
@@ -125,14 +129,14 @@ class fcCalc(object):
         (3) The program will automatically identify if the left and right atom ids are the same as the atom id of the dump_velcity_file.
         '''  
 
-        # Note that these indices differ from atom IDs by a factor of one (1)
+        # Note that these indices differ from atom IDs by a factor of one (1), this is required due to python index from 0
         
-        self.inds_left = self.get_ids('dump.left')-1
-        self.inds_right = self.get_ids('dump.right')-1    
+        self.inds_left = self.get_ids('dump.left')-1  			## the files name must the same as the one in forces.in
+        self.inds_right = self.get_ids('dump.right')-1   		## the files name must the same as the one in forces.in 
         
         # All atom indices sorted by atom ID, duplicates removed
         
-        self.inds_interface_compare = self.get_ids('dump.interface')
+        self.inds_interface_compare = self.get_ids('dump.interface')          ## the files name must the same as the one in forces.in
         self.inds_interface = np.unique(np.concatenate((self.inds_left, self.inds_right))) 
         
         if ((self.inds_interface_compare == self.inds_interface).all()):
@@ -305,6 +309,12 @@ class fcCalc(object):
         np.save(self.fileprefix + '.ids_R.npy', self.ids_R)
         np.save(self.fileprefix + '.ids_Interface.npy', self.inds_interface)
         np.savetxt(self.fileprefix, self.Kij, delimiter=' ')
+        
+        ##  Delete the dump file, cause the users don't need to use them
+        os.remove('dump.left')
+        os.remove('dump.right')
+        os.remove('dump.interface')
+        
         print('\nKij have been written to the ' + self.fileprefix + ' file\n')
 
 
