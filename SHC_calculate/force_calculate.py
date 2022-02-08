@@ -139,8 +139,8 @@ class fcCalc(object):
         self.inds_interface = np.unique(np.concatenate((self.inds_left, self.inds_right))) 
         
         if ((self.inds_interface_compare == self.inds_interface).all()):
-        	
-        	print('\n\tLAMMPS SETUP Warning: The atomic id of dump_interface is not equal' 
+
+            print('\n\tLAMMPS SETUP Warning: The atomic id of dump_interface is not equal' 
         					'to the id added by left and right, which may cause errors! ')
         
         # Where are the atoms of the left atom set
