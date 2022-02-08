@@ -13,9 +13,7 @@ If you use the code, the following citations are highly recommended.
 1.   K. Sääskilahti, J. Oksanen, J. Tulkki, and S. Volz, [Phys. Rev. B 90, 134312 (2014)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.90.134312) 
 2.   K. Sääskilahti, J. Oksanen, S. Volz, and J. Tulkki, [Phys. Rev. B 91, 115426 (2015)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.92.245411) 
 3.   Xu K, Deng S, Liang T, et al, [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K). Nanoscale, 2022
-4.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022
-
-​                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+4.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 ## Need to be modified files
 
@@ -108,7 +106,9 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
   If one want to run lammps and python in parallel, one can use following command (need to set **`if_MPI = True`** in SHC_generate.py file):
 
-  ​		mpirun  -np  10  python  SHC_generate.py   # for generate the force constant in parallel
+  ```shell
+  mpirun  -np  10  python  SHC_generate.py   # for generate the force constant in parallel
+  ```
 
   ------
 
@@ -117,7 +117,7 @@ g++  compactify_vels.cpp  -o  compactify_vels
   - [x] tips: check the **`generate_force.log`** file is a good option
 
   *If you are lucky, maybe you don’t need to modify anything*
-
+  
   
 
 ## Output
@@ -133,3 +133,4 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 ### <p align="left">2. Accumulated conductance</p>
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
+
