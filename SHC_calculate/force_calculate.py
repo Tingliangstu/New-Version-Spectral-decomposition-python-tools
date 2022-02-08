@@ -75,8 +75,7 @@ class fcCalc(object):
         :return: None
         """
         if if_MPI:
-        	
-        	 from mpi4py import MPI
+        	from mpi4py import MPI
            me = MPI.COMM_WORLD.Get_rank()
            nprocs = MPI.COMM_WORLD.Get_size()
         
