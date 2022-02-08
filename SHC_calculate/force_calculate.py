@@ -75,23 +75,23 @@ class fcCalc(object):
         :return: None
         """
         if if_MPI:
-        	from mpi4py import MPI
-           me = MPI.COMM_WORLD.Get_rank()
-           nprocs = MPI.COMM_WORLD.Get_size()
+            from mpi4py import MPI
+            me = MPI.COMM_WORLD.Get_rank()
+            nprocs = MPI.COMM_WORLD.Get_size()
         
         from lammps import lammps
         
         cmd_list = ['-log', 'generate_force.log', '-screen', 'none']
         
         if not show_log:
-           cmd_list += ['-echo', 'none']
+            cmd_list += ['-echo', 'none']
            
         self.lmp = lammps(cmdargs = cmd_list)
 
         if in_lammps is not None:
-        	 pass
+            pass
         else:
-        	 sys.exit('\n\tFile error: The in file that lammps needs to read does not exist!\n')
+            sys.exit('\n\tFile error: The in file that lammps needs to read does not exist!\n')
 
         #lines = open(in_lammps,'r').readlines()
         #for line in lines: self.lmp.command(line) 
