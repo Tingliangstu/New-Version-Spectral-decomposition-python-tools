@@ -5,7 +5,17 @@
 
 Notes: 
 
- **When use this method to calculation some material with very low thermal conductivity, maybe one can get some very strange results (the spectral heat flux will turn to negative or positive). I don't know why, but one can increase the temperature difference between the heat source and sink to address this problem.  I would appreciate it if someone could email me the mechanism behind it.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+ **When use this method to calculation some material with very low thermal conductivity, maybe one can get some very strange results (the spectral heat flux will turn to negative or positive). I don't know why, but one can increase the temperature difference between the heat source and sink to address this problem.  I would appreciate it if someone could email me the mechanism behind it.**   
+
+If you use the code, the following citations are highly recommended.
+
+
+1.   K. Sääskilahti, J. Oksanen, J. Tulkki, and S. Volz, [Phys. Rev. B 90, 134312 (2014)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.90.134312) 
+2.   K. Sääskilahti, J. Oksanen, S. Volz, and J. Tulkki, [Phys. Rev. B 91, 115426 (2015)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.92.245411) 
+3.   Xu K, Deng S, Liang T, et al, [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K). Nanoscale, 2022
+4.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022
+
+​                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
 ## Need to be modified files
 
@@ -96,7 +106,11 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 - **python SHC_generate.py**
 
-- ------
+  If one want to run lammps and python in parallel, one can use following command (need to set **`if_MPI = True`** in SHC_generate.py file):
+
+  ​		mpirun  -np  10  python  SHC_generate.py   # for generate the force constant in parallel
+
+  ------
 
   ***Maybe one need to modify the input file according to the error report***
 
@@ -119,20 +133,3 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 ### <p align="left">2. Accumulated conductance</p>
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
-
-
-
-
-
-
-
-
-#### <p align="left">I f you use the code, the following citations are highly recommended.</p>
-
-<p align="left">
-
-1.   K. Sääskilahti, J. Oksanen, J. Tulkki, and S. Volz, [Phys. Rev. B 90, 134312 (2014)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.90.134312) 
-2.   K. Sääskilahti, J. Oksanen, S. Volz, and J. Tulkki, [Phys. Rev. B 91, 115426 (2015)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.92.245411) 
-3.   [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K), Nanoscale.
-4.  [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374),  [Journal of the American Ceramic Society](https://ceramics.onlinelibrary.wiley.com/journal/15512916)  </p>
-
