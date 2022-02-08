@@ -15,7 +15,7 @@ If you use the code, the following citations are highly recommended.
 3.   Xu K, Deng S, Liang T, et al, [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K). Nanoscale, 2022
 4.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
-## Need to be modified files
+## Files need to be modified
 
 - [x] relax_thermal.in (input file for lammps, and use to get the atoms velocity)
 - [x] forces.in (input file for force_calculate.py, in order to call the python interface of lammps)
@@ -133,4 +133,3 @@ g++  compactify_vels.cpp  -o  compactify_vels
 
 ### <p align="left">2. Accumulated conductance</p>
 <div align=center><img width="320" height="250" src="https://github.com/Tingliangstu/New-Version-Spectral-decomposition-python-tools/blob/master/SHC_calculate/Fij.dat_accumulated_ITC.png" style="zoom:50%;"/>
-
