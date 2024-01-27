@@ -27,36 +27,6 @@ pair_coeff            *      *           BNC.tersoff        B        C       N
 
 timestep              ${DT}
 
-#  *************************  The following to  divide  block ***********************
-#  *************************  For Y direction  **************************************
-
-variable         y_max        equal           ly
-variable         P            equal     ${y_max}/2-100
-variable         P1           equal     ${y_max}/2+100
-
-variable         tmp1         equal     ${P1}-${P}
-variable         tmp          equal     ${tmp1}/40
-
-variable         L1           equal     ${P}+3*${tmp}
-variable         R1           equal     ${P1}-3*${tmp}
-
-region          lfixed     block     INF   INF        INF              ${P}                 INF   INF    units box
-region          rfixed     block     INF   INF       ${P1}             INF                  INF   INF    units box
-
-region          hot        block     INF   INF       ${P}              ${L1}                INF   INF    units box
-region          cold       block     INF   INF       ${R1}             ${P1}                INF   INF    units box
-
-region          fixed      union     2     lfixed    rfixed
-
-region          main       block     INF   INF       ${P}              ${P1}                INF   INF    units box
-
-group           lfixed      region       lfixed
-group           rfixed      region       rfixed
-group           hot         region       hot
-group           cold        region       cold
-
-group           main        region       main
-
 ## *****************  Frozen atomic group  **************         
                     
 group           freeze      region       fixed
