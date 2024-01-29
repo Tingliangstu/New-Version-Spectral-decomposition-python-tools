@@ -27,31 +27,7 @@ pair_coeff            *      *           BNC.tersoff        B        C       N
 
 timestep              ${DT}
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
 # The grouping methods are no need here, since they have been defined in thermal.in file
-=======
->>>>>>> Stashed changes
-## *****************  Frozen atomic group  **************         
-                    
-group           freeze      region       fixed
-
-##*****************  Velocity groups for transmission calculation  *****************
-
-variable        dmid         equal          6                                    ## Set to 6 (A) here
-variable        middle       equal     ${y_max}/2 
-variable        mid_left     equal     ${middle}-${dmid}
-variable        mid_right    equal     ${middle}+${dmid}+5
-
-region          int_L        block     INF  INF         ${mid_left}        ${middle}            INF   INF    units box
-region          int_R        block     INF  INF         ${middle}          ${mid_right}         INF   INF    units box
-
-group           interface_L  region    int_L
-group           interface_R  region    int_R
-group           interface    union     interface_L     interface_R
-
->>>>>>> 51f6cbb510b525edf8143129943572580a5a9636
 ##  **************  Freeze (Freeze some of the atoms of the model)  **************
 
 velocity         freeze    set       0.0   0.0   0.0    units box
