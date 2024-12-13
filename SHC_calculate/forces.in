@@ -37,22 +37,22 @@ fix              3        freeze     nve/noforce
 
 fix              1          main          nve
 
-variable 	       N          equal    "count(all)"
-variable	       NL         equal    "count(interface_L)"
-variable 	       NR         equal    "count(interface_R)"
+variable 	       N          equal    "count(all)"          ## Here u need to modify the group name according to your in file 
+variable	       NL         equal    "count(interface_L)"  ## Here u need to modify the group name according to your in file
+variable 	       NR         equal    "count(interface_R)"  ## Here u need to modify the group name according to your in file
 
 print 		        "NL  ${NL}"  
 print  		        "NR  ${NR}"  
 
 ## dump group ids
 
-dump               left      interface_L         custom   1   dump.left   id
+dump               left      interface_L         custom   1   dump.left   id       ## Here u need to modify the group name according to your in file
 dump_modify        left      sort id
 
-dump               right     interface_R         custom   1   dump.right   id
+dump               right     interface_R         custom   1   dump.right   id      ## Here u need to modify the group name according to your in file
 dump_modify        right     sort id
 
-dump               interface     interface       custom   1   dump.interface   id
+dump               interface     interface       custom   1   dump.interface   id  ## Here u need to modify the group name according to your in file
 dump_modify        interface     sort id
 
 run                0
