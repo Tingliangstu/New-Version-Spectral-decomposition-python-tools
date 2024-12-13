@@ -9,11 +9,59 @@ Made some modifications by Liang Ting
 liangting.zj@gmail.com
 2021/7/23 14:22:15
 """
-
+import time
 import numpy as np
 import sys, os
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
+from lammps import lammps
 
 __all__ = ["fcCalc"]
+
+def initialize_lammps(in_file):
+
+    lmp = lammps(cmdargs=['-log', 'none', '-screen', 'none'])
+    with open(in_file, 'r') as file:
+        for line in file:
+            if "quit" not in line:
+                lmp.command(line)
+    return lmp
+
+def compute_force_constants(hstep, inds_left, inds_right, i1, in_file):
+    """
+    Prepare the LAMMPS object for computing force constants.
+    Uses the `Python library interface <https://lammps.sandia.gov/doc/Python_library.html>`_
+    of LAMMPS so you need to have (1) `lammps` in your `PYTHONPATH` and
+    """
+    lmp = initialize_lammps(in_file)
+    ind1 = inds_left[i1]
+    results = np.zeros((3, len(inds_right) * 3))
+    inds_right_1d = np.concatenate((3 * inds_right, 3 * inds_right + 1, 3 * inds_right + 2))
+    inds_right_1d = np.sort(inds_right_1d)
+
+    for direction in [0, 1, 2]:
+        index = 3 * ind1 + direction
+        yc = lmp.gather_atoms("x", 1, 3)
+        yc[index] += hstep
+        lmp.scatter_atoms("x", 1, 3, yc)
+        lmp.command("run 0 post no")
+        fc1 = lmp.gather_atoms("f", 1, 3)
+        fc1 = np.array(fc1, dtype=np.dtype('f8'))
+
+        yc[index] -= 2 * hstep
+        lmp.scatter_atoms("x", 1, 3, yc)
+        lmp.command("run 0 post no")
+        fc2 = lmp.gather_atoms("f", 1, 3)
+        fc2 = np.array(fc2, dtype=np.dtype('f8'))
+
+        results[direction, :] = (fc2[inds_right_1d] - fc1[inds_right_1d]) / (2.0 * hstep)
+        yc[index] += hstep
+        lmp.scatter_atoms("x", 1, 3, yc)
+
+    lmp.close()
+    print("\t\t\t Finished moving atom %i / %i" % (i1 + 1, len(inds_left)))
+    
+    return i1, results
 
 class fcCalc(object):
     """
@@ -27,7 +75,7 @@ class fcCalc(object):
     :type restartfile: str
     """
     def __init__(self, fileprefix):
-    	
+
         self.fileprefix = fileprefix
         self.Kij = None
         self.inds_left = None                  ## Used to find the index of the atoms on the left
@@ -35,7 +83,6 @@ class fcCalc(object):
         self.inds_interface = None             ## Used to compare with the atomic index in the dump_velovity file
         self.ids_L = None                      ## Used to index the speed ordinal (left)
         self.ids_R = None                      ## Used to index the speed ordinal (right)
-        self.natoms = None
         self.lmp = None                        ## Python-Lammps interface
 
     def __enter__(self):
@@ -45,7 +92,7 @@ class fcCalc(object):
         return False
         
     def get_ids(self, ids_file):
-    	
+
         if not os.path.exists(ids_file):
            print('\nERROR: file {} not found\n'.format(ids_file))
            exit()
@@ -63,23 +110,17 @@ class fcCalc(object):
         
         return np.array(ids)
         
-    def preparelammps(self, in_lammps = None, w_interface = 6.0, show_log = False, if_MPI = True):
+    def preparelammps(self, in_lammps = None, group_name_L = "NL", 
+                      group_name_R = "NR", group_name_interface = "N", show_log = False):
         """
-        Prepare the LAMMPS object for computing force constants.
+        Prepare the LAMMPS object for determine the atoms object.
         :param fileprefix: File prefix (lammps in_file)
         :type fileprefix: str
-        :param w_interface: Width of the area of atoms to include in the interface, defaults to 6.0
-        :type w_interface: float, optional
         :param show_log: Whether to write the log file to the generate_force.log file, if true, no log file will be generated. (default False)
         :type show_log: boolean, optional
         :return: None
-        """
-        if if_MPI:
-            from mpi4py import MPI
-            me = MPI.COMM_WORLD.Get_rank()
-            nprocs = MPI.COMM_WORLD.Get_size()
-        
-        from lammps import lammps
+        """        
+        self.in_lammps = in_lammps
         
         cmd_list = ['-log', 'generate_force.log', '-screen', 'none']
         
@@ -87,19 +128,19 @@ class fcCalc(object):
             cmd_list += ['-echo', 'none']
            
         self.lmp = lammps(cmdargs = cmd_list)
-
-        if in_lammps is not None:
+        
+        if self.in_lammps is not None:
             pass
         else:
             sys.exit('\n\tFile error: The in file that lammps needs to read does not exist!\n')
 
-        #lines = open(in_lammps,'r').readlines()
+        #lines = open(self.in_lammps,'r').readlines()
         #for line in lines: self.lmp.command(line) 
         """
         Do the same as lmp.command(filename) but don't allow the script to be
         continued after quit.
         """
-        lines = open(in_lammps,'r').readlines()
+        lines = open(self.in_lammps,'r').readlines()
         for line in lines:
            #print(line)
            if "quit" in line and line[0] != "#":
@@ -107,31 +148,21 @@ class fcCalc(object):
                        'to exit the execution of the in.file at this time\n')    ## Quit lammps if find the keyword 'quit'
            else:
               self.lmp.command(line)
-             
-        # Get the position of the interface, at the middle by default (0.5)
-        
-        #xlo = self.lmp.extract_global("boxxlo", 1)  # no need
-        #xhi = self.lmp.extract_global("boxxhi", 1)
-        
-        #print ("Box is [%f,  %f]." % (xlo, xhi))                            # Print the boundaries of the box (optional)
-        
-        # These variables (including middle, mid_left, and mid_right) must be predefined in the in_file
-   
+              
         '''
         (1) minimize            0    1.0e-3   1000   1000     # (after relaxing the structures to the potential minimum)
             run                 0
             After the structure is completely relaxed, the process of energy minimization must be added
-            
-        (2) Since energy minimization may result in different atomic Numbers on the left and right sides of the interface, 
-            the definition of the width of the interface can be fine-tuned.
-            
+        
+        (2) The atomic grouping at the interface is already specified in the lammp in (thermal.in) file, so there is no need to deal with it here
+        
         (3) The program will automatically identify if the left and right atom ids are the same as the atom id of the dump_velcity_file.
         '''  
 
         # Note that these indices differ from atom IDs by a factor of one (1), this is required due to python index from 0
         
-        self.inds_left = self.get_ids('dump.left')-1  			## the files name must the same as the one in forces.in
-        self.inds_right = self.get_ids('dump.right')-1   		## the files name must the same as the one in forces.in 
+        self.inds_left = self.get_ids('dump.left')-1  	 ## the files name must the same as the one in forces.in
+        self.inds_right = self.get_ids('dump.right')-1    ## the files name must the same as the one in forces.in
         
         # All atom indices sorted by atom ID, duplicates removed
         
@@ -155,9 +186,9 @@ class fcCalc(object):
         
         # Get information from the in file 
         
-        N = self.lmp.extract_variable("N", "all", 0)
-        NL = self.lmp.extract_variable("NL", "all", 0)
-        NR = self.lmp.extract_variable("NR", "all", 0)
+        N = self.lmp.extract_variable(group_name_interface, "all", 0)
+        NL = self.lmp.extract_variable(group_name_L, "all", 0)
+        NR = self.lmp.extract_variable(group_name_R, "all", 0)
         
         # Determine whether the number of left and right atoms is equal
 
@@ -166,10 +197,8 @@ class fcCalc(object):
         
         if (len(self.ids_L) != len(self.ids_R) or len(self.ids_L) != NR or len(self.ids_R) != NL):
             print('\nLAMMPS SETUP Warning: Number of atoms on left and right side don\'t match!')
-                         
-                  
 
-    def fcCalc(self, hstep):
+    def fcCalc(self, hstep, n_cores=None):
         """
          Compute force constants and store to `self.Kij`.
         :param hstep: Step to use in finite differences (the finite displacement method)
@@ -230,84 +259,43 @@ class fcCalc(object):
             :               :                  :               :
             :               :                  :               :    
         """
-        lmp = self.lmp
-        natoms = self.natoms
         inds_left = self.inds_left
         inds_right = self.inds_right
 
-        # One-dimensional indices of the atoms on the right side (Y-coordinates)
-        
-        inds_right_1d = np.concatenate((3 * inds_right, 3 * inds_right + 1, 3 * inds_right + 2))
-        inds_right_1d = np.sort(inds_right_1d)
-
         Kij = np.zeros((len(inds_left) * 3, len(inds_right) * 3))
-
-        # Loop over the atoms on the left side
-        
-        print ('\nNow start the loop and move the atoms to calculate the force constant!!!')
-        for i1 in range(0, len(inds_left)):
-            #  (For test) for i1 in range(0,10):
-            # Index of the atom on the left
-            ind1 = inds_left[i1]
-            # Find the indices of atom ind1 in the 1D array (For test)
-            indx = 3 * ind1                                    # directions x
-            indy = 3 * ind1 + 1                                # directions y
-            indz = 3 * ind1 + 2                                # directions z
-
-            print ("\t\t\tMoving atom %i / %i" % (i1 + 1, len(inds_left)))
             
-            # Move atom to directions x(0), y(1), and z(2)
-            
-            for direction in [0, 1, 2]:
-                # Index of the displaced degree of freedom
-                index = 3 * ind1 + direction
-                # Get the coordinates from LAMMPS
-                yc = lmp.gather_atoms("x", 1, 3)
-                # Move the atom
-                yc[index] += hstep
-                # Communicate to LAMMPS
-                lmp.scatter_atoms("x", 1, 3, yc)
-                # Run LAMMPS to update the forces
-                lmp.command("run 0 post no")         ## The 'post no' means the full timing summary is skipped; only a one-line summary timing is printed
-                # Gather the forces
-                fc1 = lmp.gather_atoms("f", 1, 3)    ## The force (including x, y, z) on all the atoms in the interface group
-                # print "1=",fc1[0]
-                # print type(fc1)
-                fc1 = np.array(fc1, dtype=np.dtype('f8'))
-                # print "2=",fc1[0]
-                # print fc1[index]                   ## Print the force of the current atom (if you need to check)
-                # Move to negative direction
-                yc[index] -= 2 * hstep
-                lmp.scatter_atoms("x", 1, 3, yc)
-                lmp.command("run 0 post no")
-                fc2 = lmp.gather_atoms("f", 1, 3)
-                fc2 = np.array(fc2, dtype=np.dtype('f8'))
-                
-                # print fc2[index]                   ## Print the force (negative direction) of the current atom (if you need to check)
-                # Fill one row of spring constant matrix
-                
-                '''
-                Calculate the force on all atoms in 
-                the right group due to the current atom's displacement (on the left)
-                '''
-                
-                Kij[3 * i1 + direction, :] = (fc2[inds_right_1d] - fc1[inds_right_1d]) / (2.0 * hstep)   ## fc2 - fc1 (Yes) ---- (Negative-Positive)
-                yc[index] += hstep
-                lmp.scatter_atoms("x", 1, 3, yc)       ## Back to equilibrium.
+        if n_cores is None:
+            n_cores = multiprocessing.cpu_count()
+
+        print(f'\nUsing {n_cores} cores for parallel computation.')				
+        print('\n  Now start the loop and move the atoms to calculate the force constant !!!')
+        start_time = time.time()
+
+        with ProcessPoolExecutor(max_workers=n_cores) as executor:
+            futures = [executor.submit(compute_force_constants, hstep, inds_left, inds_right, i1, self.in_lammps) for i1 in range(len(inds_left))]
+            completed = 0
+            total_tasks = len(inds_left)            
+            for future in futures:
+                i1, result = future.result()
+                Kij[3 * i1:3 * i1 + 3, :] = result
+                completed += 1
+                #print(f'Completed {completed} out of {total_tasks} tasks.')                
 
         self.Kij = Kij
-        lmp.close()
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Total time taken for calculating the force constant: {:.2f} seconds".format(elapsed_time))
 
     def writeToFile(self):
-        '''
+        """
         Write `self.Kij` to files starting with `self.fileprefix`.
         :return: None
-        '''
+        """
         np.save(self.fileprefix + '.Kij.npy', self.Kij)
         np.save(self.fileprefix + '.ids_L.npy', self.ids_L)
         np.save(self.fileprefix + '.ids_R.npy', self.ids_R)
         np.save(self.fileprefix + '.ids_Interface.npy', self.inds_interface)
-        np.savetxt(self.fileprefix, self.Kij, delimiter=' ')
+        #np.savetxt(self.fileprefix, self.Kij, delimiter=' ')  # just for checking
         
         ##  Delete the dump file, cause the users don't need to use them
         os.remove('dump.left')
@@ -318,22 +306,21 @@ class fcCalc(object):
 
 
 if __name__ == "__main__":
-	
-    # import argparse
-    # parser=argparse.ArgumentParser()
-    # parser.add_argument("filePrefix",help="The prefix of file for which to calculate the force constants")
-    # parser.add_argument("hstep",default=0.01,help="The displacement used in the finite-difference evaluation of force constants.")
-
-    # args=parser.parse_args()
-    # fileprefix=args.filePrefix
-    # hstep=args.hstep
+    
+    group_name_L = "NL"          # group name in forces.in
+    group_name_R = "NR"          # group name in forces.in
+    group_name_interface = "N"   # group name in forces.in
     
     fileprefix = 'Fij.dat'
-    hstep = 0.01                                     ## Maybe hstep = 0.01 is a good choice
-    in_file = 'forces.in'                            ## The in file for lammps
+    hstep = 0.1                           ## Maybe hstep = 0.01 is a good choice
+    in_file = 'forces.in'                 ## The in file for lammps
     
     with fcCalc(fileprefix) as fc:
-        fc.preparelammps(in_lammps = in_file, w_interface = 30)
-        fc.fcCalc(hstep)
+        fc.preparelammps(in_lammps=in_file,
+                         group_name_L=group_name_L,
+                         group_name_R=group_name_R,
+                         group_name_interface=group_name_interface)
+                         
+        fc.fcCalc(hstep, n_cores=20)
         fc.writeToFile()
-        print('Forces Calculate All Done\n')
+        print('Forces Calculate All Done !\n')
