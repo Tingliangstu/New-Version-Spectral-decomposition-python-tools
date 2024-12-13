@@ -9,11 +9,11 @@ Notes:
 
 If you use the code, the following citations are highly recommended.
 
-
-1.   K. Sääskilahti, J. Oksanen, J. Tulkki, and S. Volz, [Phys. Rev. B 90, 134312 (2014)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.90.134312) 
-2.   K. Sääskilahti, J. Oksanen, S. Volz, and J. Tulkki, [Phys. Rev. B 91, 115426 (2015)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.92.245411) 
-3.   Xu K, Deng S, Liang T, et al, [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K). Nanoscale, 2022
-4.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022                                                                                                                                                                                                                                                                                                                                                                                                                                    
+1.   Jiang W, Liang T, Xu J, et al, [Twist-dependent anisotropic thermal conductivity in homogeneous MoS2 stacks](https://www.sciencedirect.com/science/article/pii/S0017931023008074?casa_token=zxYh-aJgIlAAAAAA:9XCAc89-GH-odfSSZCny0ttMRcosnk0RS8rgXZkdI4bvPronsqn8DHbuRN--r9ft5xbQoW8)
+2.   K. Sääskilahti, J. Oksanen, J. Tulkki, and S. Volz, [Phys. Rev. B 90, 134312 (2014)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.90.134312) 
+3.   K. Sääskilahti, J. Oksanen, S. Volz, and J. Tulkki, [Phys. Rev. B 91, 115426 (2015)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.92.245411) 
+4.   Xu K, Deng S, Liang T, et al, [Efficient mechanical modulation of the phonon thermal conductivity of Mo<sub>6</sub>S<sub>6</sub> nanowires](https://pubs.rsc.org/en/Content/ArticleLanding/2022/NR/D1NR08505K). Nanoscale, 2022
+5.   Yao Y, Ren G, Yu Y, et al., [ Thermal conduction mechanism of ferroelastic Zr‐Y‐Yb‐Ta‐Nb‐O high‐entropy oxides with glass‐like thermal conductivity](https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.18374).  Journal of the American Ceramic Society, 2022                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 ## Files need to be modified
 
